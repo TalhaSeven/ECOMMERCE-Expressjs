@@ -9,7 +9,8 @@ export default class CampaignController {
       if (!list) {
         return res.status(401).send({ message: "no valid data found" });
       }
-      return res.status(200).send({ message: "", list });
+
+      res.status(200).send({ message: "", list });
     } catch (error) {
       return res.status(401).send({ message: "error" });
     }
@@ -24,7 +25,8 @@ export default class CampaignController {
       if (!user) {
         return res.status(401).send({ message: "no valid data found" });
       }
-      return res.status(200).send({ message: "", user, basket: userBasket });
+
+      res.status(200).send({ message: "", user, basket: userBasket });
     } catch (error) {
       return res.status(401).send({ message: "error" });
     }

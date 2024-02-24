@@ -5,6 +5,7 @@ import jwt from "jsonwebtoken";
 export default class AuthController {
   async login(req: Request, res: Response) {
     const { email, password } = req.body;
+    console.log(req.body.name);
 
     if (!email && !password) {
       return res
@@ -25,6 +26,7 @@ export default class AuthController {
           id: loginUser.id,
           email: loginUser.email,
           confirm: loginUser.confirm,
+          role: loginUser.role,
         },
         "123",
         { expiresIn: "12h" }
@@ -35,6 +37,7 @@ export default class AuthController {
           id: loginUser.id,
           email: loginUser.email,
           confirm: loginUser.confirm,
+          role: loginUser.role,
         },
         token,
       });
@@ -83,9 +86,12 @@ export default class AuthController {
 
         req.body.authUser = { userId, userEmail, userConfirm };
       } catch (error) {
-        return res
-          .status(401)
-          .json({ success: false, message: "Invalid authorization" });
+        if (req.baseUrl.endsWith("product")) {
+        } else {
+          return res
+            .status(401)
+            .json({ success: false, message: "Invalid authorization" });
+        }
       }
     }
 

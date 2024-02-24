@@ -82,6 +82,9 @@ export default class PaymentController {
             );
 
             await movementRepository.payRowUpdate(userId, payId);
+
+            // coupon confirm update
+
             const userBasket = await movementRepository.basket(userId);
 
             return res
@@ -99,12 +102,12 @@ export default class PaymentController {
           })
           .catch((error) => {
             console.log(error);
-            return res.status(400).send({ message: "erroneous transaction" });
+            return res.status(400).send({ message: "hatalı" });
           });
       } else {
         return res
           .status(200)
-          .send({ message: "bank refused payment" });
+          .send({ message: "banka ödeme işlemini red etti" });
       }
     } else {
       return res.status(200).send({ message: "no basket" });
@@ -124,7 +127,7 @@ export default class PaymentController {
       })
       .catch((error) => {
         console.log(error);
-        return res.status(400).send({ message: "erroneous transaction" });
+        return res.status(400).send({ message: "wrong" });
       });
   }
 }

@@ -9,7 +9,7 @@ export default class PriceController {
         return res.status(401).send({ message: "no valid data found" });
       }
 
-      return res.status(200).send({ message: "", list });
+      res.status(200).send({ message: "", list });
     } catch (error) {
       return res.status(401).send({ message: "error" });
     }
@@ -34,7 +34,7 @@ export default class PriceController {
           discountRate
         );
 
-        return res.status(200).send({ message: "", data: insert });
+        res.status(200).send({ message: "", data: insert });
       } catch (error) {
         return res.status(401).send({ message: "error" });
       }
@@ -47,7 +47,7 @@ export default class PriceController {
         return res.status(401).send({ message: "no valid data found" });
       }
 
-      return res.status(200).send({ message: "", list });
+      res.status(200).send({ message: "", list });
     } catch (error) {
       return res.status(401).send({ message: "error" });
     }

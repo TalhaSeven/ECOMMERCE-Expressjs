@@ -8,7 +8,8 @@ export default class VariationController {
       if (!list) {
         return res.status(401).send({ message: "no valid data found" });
       }
-      return res.status(200).send({ message: "", list });
+
+      res.status(200).send({ message: "", list });
     } catch (error) {
       return res.status(401).send({ message: "error" });
     }
@@ -22,7 +23,8 @@ export default class VariationController {
         description,
         seo
       );
-      return res.status(200).send({ message: "successful", data: insert });
+
+      res.status(200).send({ message: "successful", data: insert });
     } catch (error) {
       return res.status(401).send({ message: "error" });
     }

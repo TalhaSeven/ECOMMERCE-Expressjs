@@ -12,14 +12,14 @@ export default class ProductController {
         return res.status(401).send({ message: "no valid data found" });
       }
 
-      return res.status(200).send({ message: "", list });
+      res.status(200).send({ message: "", list });
     } catch (error) {
       return res.status(401).send({ message: "error", error });
     }
   }
   async getProduct(req: Request, res: Response) {
     const { authUser } = req.body;
-    const userId = authUser.userId;
+    const userId = authUser?.userId ?? 0;
 
     const url = require("url");
     const querystring = require("querystring");
@@ -39,9 +39,7 @@ export default class ProductController {
           return res.status(401).send({ message: "no valid data found" });
         }
 
-        return res
-          .status(200)
-          .send({ message: "", row, favorite: rowFavorite });
+        res.status(200).send({ message: "", row, favorite: rowFavorite });
       } else {
         const row = await ProductRepository.productSeo(req.params.seo);
         const rowFavorite = await favoriteRepository.one(row?.id ?? 0, userId);
@@ -49,7 +47,7 @@ export default class ProductController {
           return res.status(401).send({ message: "no valid data found" });
         }
 
-        return res
+        res
           .status(200)
           .send({ message: "", row, favorite: rowFavorite ? true : false });
       }
@@ -65,7 +63,7 @@ export default class ProductController {
         return res.status(401).send({ message: "no valid data found" });
       }
 
-      return res.status(200).send({ status: true, message: "", row });
+      res.status(200).send({ status: true, message: "", row });
     } catch (error) {
       return res.status(401).send({ message: "error" });
     }
@@ -78,7 +76,7 @@ export default class ProductController {
         return res.status(401).send({ message: "no valid data found" });
       }
 
-      return res.status(200).send({ status: true, message: "", row });
+      res.status(200).send({ status: true, message: "", row });
     } catch (error) {
       return res.status(401).send({ message: "error" });
     }
@@ -92,7 +90,7 @@ export default class ProductController {
         return res.status(401).send({ message: "no valid data found" });
       }
 
-      return res.status(200).send({ status: true, message: "", row, now });
+      res.status(200).send({ status: true, message: "", row, now });
     } catch (error) {
       return res.status(401).send({ message: "error" });
     }
@@ -104,7 +102,7 @@ export default class ProductController {
         return res.status(404).send({ message: "no valid data found" });
       }
 
-      return res.status(200).send({ message: "", rows });
+      res.status(200).send({ message: "", rows });
     } catch (error) {
       return res.status(401).send({ message: "error" });
     }
@@ -124,9 +122,9 @@ export default class ProductController {
         tax
       );
 
-      return res.status(200).send({ message: "successful", data: insert });
+      res.status(200).send({ message: "successful", data: insert });
     } catch (error) {
-      return res.status(500).send({ message: "Some error" });
+      res.status(500).send({ message: "Some error" });
     }
   }
 
@@ -155,12 +153,12 @@ export default class ProductController {
         if (!row) {
           return res.status(401).send({ message: "no valid data found" });
         }
-        return res.status(200).send({ status: true, message: "", row });
+        res.status(200).send({ status: true, message: "", row });
       } else {
-        return res.status(401).send({ message: "no valid data found" });
+        res.status(401).send({ message: "no valid data found" });
       }
     } catch (error) {
-      return res.status(500).send({ message: "Some error" });
+      res.status(500).send({ message: "Some error" });
     }
   }
 }
