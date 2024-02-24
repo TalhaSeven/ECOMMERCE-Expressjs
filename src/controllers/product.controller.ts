@@ -1,0 +1,166 @@
+import { Request, Response } from "express";
+import ProductRepository from "../repositories/product.repository";
+import favoriteRepository from "../repositories/favorite.repository";
+
+export default class ProductController {
+  async getProducts(req: Request, res: Response) {
+    console.log("getProducts >> ");
+
+    try {
+      const list = await ProductRepository.list();
+      if (!list) {
+        return res.status(401).send({ message: "no valid data found" });
+      }
+
+      return res.status(200).send({ message: "", list });
+    } catch (error) {
+      return res.status(401).send({ message: "error", error });
+    }
+  }
+  async getProduct(req: Request, res: Response) {
+    const { authUser } = req.body;
+    const userId = authUser.userId;
+
+    const url = require("url");
+    const querystring = require("querystring");
+
+    const rawUrl = req.protocol + "://" + req.get("Host") + req.url;
+    const parsedUrl = url.parse(rawUrl);
+
+    const parsedQs = querystring.parse(parsedUrl.query);
+
+    const id = parsedQs.id === "true";
+
+    try {
+      if (id === true) {
+        const row = await ProductRepository.productId(parseInt(req.params.seo));
+        const rowFavorite = await favoriteRepository.one(row?.id ?? 0, userId);
+        if (!row) {
+          return res.status(401).send({ message: "no valid data found" });
+        }
+
+        return res
+          .status(200)
+          .send({ message: "", row, favorite: rowFavorite });
+      } else {
+        const row = await ProductRepository.productSeo(req.params.seo);
+        const rowFavorite = await favoriteRepository.one(row?.id ?? 0, userId);
+        if (!row) {
+          return res.status(401).send({ message: "no valid data found" });
+        }
+
+        return res
+          .status(200)
+          .send({ message: "", row, favorite: rowFavorite ? true : false });
+      }
+    } catch (error) {
+      return res.status(401).send({ message: "error" });
+    }
+  }
+  async setProductEnable(req: Request, res: Response) {
+    const id: number = parseInt(req.params.id);
+    try {
+      const row = await ProductRepository.productUpdate(id, { confirm: true });
+      if (!row) {
+        return res.status(401).send({ message: "no valid data found" });
+      }
+
+      return res.status(200).send({ status: true, message: "", row });
+    } catch (error) {
+      return res.status(401).send({ message: "error" });
+    }
+  }
+  async setProductDisable(req: Request, res: Response) {
+    const id: number = parseInt(req.params.id);
+    try {
+      const row = await ProductRepository.productUpdate(id, { confirm: false });
+      if (!row) {
+        return res.status(401).send({ message: "no valid data found" });
+      }
+
+      return res.status(200).send({ status: true, message: "", row });
+    } catch (error) {
+      return res.status(401).send({ message: "error" });
+    }
+  }
+  async setProductDelete(req: Request, res: Response) {
+    const id: number = parseInt(req.params.id);
+    const now = new Date(Date.now());
+    try {
+      const row = await ProductRepository.productUpdate(id, { deletedAt: now });
+      if (!row) {
+        return res.status(401).send({ message: "no valid data found" });
+      }
+
+      return res.status(200).send({ status: true, message: "", row, now });
+    } catch (error) {
+      return res.status(401).send({ message: "error" });
+    }
+  }
+  async search(req: Request, res: Response) {
+    try {
+      const rows = await ProductRepository.search(req.params.search);
+      if (rows.length === 0) {
+        return res.status(404).send({ message: "no valid data found" });
+      }
+
+      return res.status(200).send({ message: "", rows });
+    } catch (error) {
+      return res.status(401).send({ message: "error" });
+    }
+  }
+
+  async setProduct(req: Request, res: Response) {
+    const { title, seo, description, stockCode, barcode, associative, tax } =
+      req.body;
+    try {
+      const insert = await ProductRepository.insert(
+        title,
+        seo,
+        description,
+        stockCode,
+        barcode,
+        associative,
+        tax
+      );
+
+      return res.status(200).send({ message: "successful", data: insert });
+    } catch (error) {
+      return res.status(500).send({ message: "Some error" });
+    }
+  }
+
+  async updateProduct(req: Request, res: Response) {
+    const {
+      id,
+      title,
+      seo,
+      description,
+      stockCode,
+      barcode,
+      associative,
+      tax,
+    } = req.body;
+    try {
+      if (id) {
+        const row = await ProductRepository.productUpdate(id, {
+          title,
+          seo,
+          description,
+          stockCode,
+          barcode,
+          associative,
+          tax,
+        });
+        if (!row) {
+          return res.status(401).send({ message: "no valid data found" });
+        }
+        return res.status(200).send({ status: true, message: "", row });
+      } else {
+        return res.status(401).send({ message: "no valid data found" });
+      }
+    } catch (error) {
+      return res.status(500).send({ message: "Some error" });
+    }
+  }
+}
