@@ -9,11 +9,9 @@ interface IUserRepository {
 
 class UserRepository implements IUserRepository {
     async login(email: string, password: string): Promise<User | null> {
-        console.log(email, password)
         try {
             return await User.findOne({ where: { email, password } })
         } catch (error) {
-            console.log(error, "error =>>")
             throw new Error("Couldn't find")
         }
     }

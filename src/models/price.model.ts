@@ -1,6 +1,6 @@
 import { Table, Column, DataType, ForeignKey, BelongsTo } from "sequelize-typescript"
 import Product from "./product.model"
-import BaseModel from "./base.model";
+import BaseModel from "./base.model"
 
 @Table({ tableName: "prices" })
 export default class Price extends BaseModel {

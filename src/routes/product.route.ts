@@ -18,9 +18,10 @@ class ProductRoutes {
         this.router.get('/confirm/enable/:id', this.controller.setProductEnable)
         this.router.get('/confirm/disable/:id', this.controller.setProductDisable)
         this.router.get('/delete/:id', this.controller.setProductDelete)
-        this.router.get('/search/:search?', this.controller.search) // soru işareti koyunca bunuda => ('/search') içine dahil ediyor
+        //this.router.get('/search', this.controller.search) soru işareti diğer satura konunca bu satırla aynı oluyor
+        this.router.get('/search/:search?', this.controller.search)
         this.router.post('/add-basket', this.auth.addBodyUser, this.movement.addBasket)
-        this.router.get('/:seo', this.controller.getProduct)
+        this.router.get('/:seo', this.auth.addBodyUser, this.controller.getProduct)
         this.router.post('/', this.controller.setProduct)
         this.router.put('/', this.controller.updateProduct)
     }

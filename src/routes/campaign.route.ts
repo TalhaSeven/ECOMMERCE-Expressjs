@@ -11,6 +11,7 @@ class CampaignRoutes {
 
     initializeRoutes() {
         this.router.get('/', this.controller.getCampaigns)
+        this.router.get('/basket', this.controller.getBasketCampaigns)
         this.router.post('/', this.controller.setCampaigns)
     }
 }

@@ -1,11 +1,11 @@
-import ProductCategory from "../models/product_category.model"
+import ProductCategory from "../models/product_category"
 
 interface IProductCategoryRepository {
     list(): Promise<Array<ProductCategory>>;
     insert(
         productId: number,
-        userId: number
-    ): Promise<ProductCategory | null>
+        categoryId: number
+    ): Promise<ProductCategory | null>;
 }
 
 class ProductCategoryRepository implements IProductCategoryRepository {
@@ -18,10 +18,10 @@ class ProductCategoryRepository implements IProductCategoryRepository {
     }
     async insert(
         productId: number,
-        userId: number
+        categoryId: number
     ): Promise<ProductCategory | null>{
         try {
-            return await ProductCategory.create({productId, userId})
+            return await ProductCategory.create({productId, categoryId})
         } catch (error) {
             throw new Error("Couldn't find")
         }

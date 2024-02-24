@@ -1,4 +1,4 @@
-import { Table, Column, ForeignKey, DataType, BelongsTo} from "sequelize-typescript"
+import { Table, Column, ForeignKey, DataType, BelongsTo, HasMany} from "sequelize-typescript"
 import BaseModel from "./base.model";
 import Product from "./product.model";
 import Users from "./user.model";
@@ -23,7 +23,14 @@ export default class Movement extends BaseModel {
     @Column({field: "movement_id"})
     movementId!: number;
 
-    @Column({ type: DataType.BOOLEAN, field: "type" })  // giriş, çıkış, header /// true => giriş, false => çıkış, null => header
+    @BelongsTo(() => Movement, 'movement_id')
+    movement: Movement | undefined
+
+    @HasMany(() => Movement, 'movement_id')
+    movements: Movement[] | undefined
+
+    @Column({ type: DataType.BOOLEAN, field: "type" })  // giriş, çıkış, header 
+                                                        // true => giriş, false => çıkış, null => header
     type!: boolean
 
     @Column({ type: DataType.STRING(10), field: "process_type" }) // fatura, sepet, ödeme, kargo, iade, çöp
