@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import UserRepository from "../repositories/user.repository";
 import jwt from "jsonwebtoken";
+import userRepository from "../repositories/user.repository";
 
 export default class AuthController {
   async login(req: Request, res: Response) {
@@ -83,8 +84,9 @@ export default class AuthController {
         const userId = decode.id;
         const userEmail = decode.email;
         const userConfirm = decode.confirm;
+        const userRole = decode.role;
 
-        req.body.authUser = { userId, userEmail, userConfirm };
+        req.body.authUser = { userId, userEmail, userConfirm, userRole };
       } catch (error) {
         if (req.baseUrl.endsWith("product")) {
         } else {
@@ -92,6 +94,46 @@ export default class AuthController {
             .status(401)
             .json({ success: false, message: "Invalid authorization" });
         }
+      }
+    }
+    next();
+  }
+
+  async isAdmin(req: Request, res: Response, next: NextFunction) {
+    const authorizationHeader = req.header("Authorization");
+    console.log(authorizationHeader);
+
+    if (!authorizationHeader || !authorizationHeader.startsWith("Bearer ")) {
+      return res
+        .status(401)
+        .json({ success: false, message: "Invalid authorization header" });
+    } else {
+      try {
+        const token = authorizationHeader.replace("Bearer ", "");
+        const verify = jwt.verify(token, "123");
+        const decode: any = verify ? jwt.decode(token) : null;
+
+        if (!decode)
+          return res
+            .status(401)
+            .json({ success: false, message: "Invalid authorization" });
+
+        const user = await userRepository.me(decode.id);
+
+        if (user?.role !== "admin")
+          return res
+            .status(401)
+            .json({ success: false, message: "Invalid authorization" });
+
+        const userId = decode.id;
+        const userEmail = decode.email;
+        const userConfirm = decode.confirm;
+        const userRole = decode.role;
+        req.body.authUser = { userId, userEmail, userConfirm, userRole };
+      } catch (error) {
+        return res
+          .status(401)
+          .json({ success: false, message: "Invalid authorization" });
       }
     }
 
