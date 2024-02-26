@@ -1,6 +1,6 @@
 import { Table, Column, DataType, HasMany} from "sequelize-typescript"
 import BaseModel from "./base.model";
-import ProductCategory from "./product_category";
+import ProductCategory from "./product_category.model";
 
 @Table({ tableName: "categories" })
 export default class Category extends BaseModel {

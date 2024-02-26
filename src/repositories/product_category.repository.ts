@@ -1,4 +1,4 @@
-import ProductCategory from "../models/product_category"
+import ProductCategory from "../models/product_category.model"
 
 interface IProductCategoryRepository {
     list(): Promise<Array<ProductCategory>>;
