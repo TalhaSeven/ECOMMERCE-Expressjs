@@ -5,10 +5,20 @@ import priceRepository from "../repositories/price.repository";
 
 export default class ProductController {
   async getProducts(req: Request, res: Response) {
-    console.log("getProducts >> ");
-
     try {
       const list = await ProductRepository.list();
+      if (!list) {
+        return res.status(401).send({ message: "no valid data found" });
+      }
+
+      res.status(200).send({ message: "", list });
+    } catch (error) {
+      return res.status(401).send({ message: "error", error });
+    }
+  }
+  async getDashboardProducts(req: Request, res: Response) {
+    try {
+      const list = await ProductRepository.allList();
       if (!list) {
         return res.status(401).send({ message: "no valid data found" });
       }
@@ -157,6 +167,7 @@ export default class ProductController {
       barcode,
       associative,
       tax,
+      confirm,
       salePrice,
       discountPrice,
       discountRate,
@@ -172,19 +183,30 @@ export default class ProductController {
           barcode,
           associative,
           tax,
+          confirm,
         });
 
-        await priceRepository.update(
-          id,
-          salePrice,
-          discountPrice,
-          discountRate
-        );
+        const price = await priceRepository.row(id);
+        if (price) {
+          await priceRepository.updateProductId(
+            id,
+            salePrice,
+            discountPrice,
+            discountRate
+          );
+        } else {
+          await priceRepository.insert(
+            id,
+            salePrice,
+            discountPrice,
+            discountRate
+          );
+        }
 
         if (!row) {
           return res.status(401).send({ message: "no valid data found" });
         }
-        res.status(200).send({ status: true, message: "", row });
+        res.status(200).send({ status: true, message: "", row, price });
       } else {
         res.status(401).send({ message: "no valid data found" });
       }

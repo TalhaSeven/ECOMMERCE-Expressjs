@@ -48,6 +48,18 @@ export default class MovementController {
       return res.status(401).send({ message: "error" });
     }
   }
+  async getUsersOrders(req: Request, res: Response) {
+    try {
+      const list = await movementRepository.usersOrders();
+      if (!list) {
+        return res.status(401).send({ message: "no valid data found" });
+      }
+
+      res.status(200).send({ message: "", list });
+    } catch (error) {
+      return res.status(401).send({ message: "error" });
+    }
+  }
   async setMovements(req: Request, res: Response) {
     const {
       productId,

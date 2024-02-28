@@ -3,11 +3,11 @@ import Product from "../models/product.model"
 import { Op } from "sequelize";
 import Rating from "../models/rating.model";
 import Variation from "../models/variation.model";
-import Category from "../models/category.model";
 
 interface IProductRepository {
     row(productId: number): Promise<Product | null>;
     list(): Promise<Array<Product>>;
+    allList(): Promise<Array<Product>>;
     productId(id: number): Promise<Product | null>;
     productSeo(seo: string): Promise<Product | null>;
     productUpdate(id: number, obj: any): Promise<Number | null>;
@@ -37,7 +37,20 @@ class ProductRepository implements IProductRepository {
         try {
             return await Product.findAll({
                 where: { confirm: true },
-                attributes: { exclude: ['id', 'confirm', 'deletedAt', 'createdAt'] },
+                attributes: { exclude: ['id', 'deletedAt', 'createdAt'] },
+                include: {
+                    model: Price,
+                    attributes: ['price', 'discountPrice', 'discountRate']
+                }
+            })
+        } catch (error) {
+            throw new Error("Couldn't find")
+        }
+    }
+    async allList(): Promise<Array<Product>> {
+        try {
+            return await Product.findAll({
+                attributes: { exclude: ['deletedAt', 'createdAt'] },
                 include: {
                     model: Price,
                     attributes: ['price', 'discountPrice', 'discountRate']

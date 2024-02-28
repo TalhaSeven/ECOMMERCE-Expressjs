@@ -15,6 +15,7 @@ class ProductRoutes {
 
     initializeRoutes() {
         this.router.get('/', this.controller.getProducts)
+        this.router.get('/dashboard-products', this.auth.isAdmin, this.controller.getDashboardProducts)
         this.router.get('/confirm/enable/:id', this.controller.setProductEnable)
         this.router.get('/confirm/disable/:id', this.controller.setProductDisable)
         this.router.get('/delete/:id', this.controller.setProductDelete)
